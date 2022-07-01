@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -53,12 +54,14 @@ namespace EmployeePayroll
 
 
                         }
-                        foreach(var employee in employeeDetailsList)
+                        foreach (var employee in employeeDetailsList)
                         {
-                            Console.WriteLine($"{employee.EmployeeID} | {employee.EmployeeName} | {employee.PhoneNumber} | {employee.Gender} | {employee.BasicPay} | {employee.Department}");
-                            
+                            Console.WriteLine($"EmployeeID: {employee.EmployeeID}\nEmployeeName: {employee.EmployeeName}\nPhoneNumber: {employee.PhoneNumber}\nAddress: {employee.Address}\nDepartment: {employee.Department}\nGender: {employee.Gender}\nBasic Pay: {employee.BasicPay}\nDeduction: {employee.Deduction}\nTaxable Pay: {employee.TaxablePay}\nTax: {employee.Tax}\nNet Pay: {employee.NetPay}\nStart Date: {employee.StartDate}\nCity: {employee.City}\nCountry: {employee.Country}");
+                            Console.WriteLine("---------X------------");
+                            Console.WriteLine("---------X------------");
+
                         }
-                      
+
                     }
                     else
                     {
@@ -67,14 +70,63 @@ namespace EmployeePayroll
                     dr.Close();
                     this.connection.Close();
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            
-
-
-
-}
+            finally
+            {
+                this.connection.Close();
+            }
         }
+
+
+        public bool AddEmployeeModel(EmployeeModel employee)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("SpAddEmployeeDetails",this.connection);
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@EmployeeName", employee.EmployeeName);
+                    command.Parameters.AddWithValue("@PhoneNumber", employee.PhoneNumber);
+                    command.Parameters.AddWithValue("@Address", employee.Address);
+                    command.Parameters.AddWithValue("@Department", employee.Department);
+                    command.Parameters.AddWithValue("@Gender", employee.Gender);
+                    command.Parameters.AddWithValue("@BasicPay", employee.BasicPay);
+                    command.Parameters.AddWithValue("@Deduction", employee.Deduction);
+                    command.Parameters.AddWithValue("@TaxablePay", employee.TaxablePay);
+                    command.Parameters.AddWithValue("@Tax", employee.Tax);
+                    command.Parameters.AddWithValue("@NetPay", employee.NetPay);
+                    command.Parameters.AddWithValue("@StartDate", DateTime.Now);
+                    command.Parameters.AddWithValue("@City", employee.City);
+                    command.Parameters.AddWithValue("@Country", employee.Country);
+                    this.connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    this.connection.Close();
+
+                    if(result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+
+                    
+
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+
+    }
 }
