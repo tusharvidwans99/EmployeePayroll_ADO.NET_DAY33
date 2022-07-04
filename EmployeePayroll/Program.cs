@@ -60,5 +60,32 @@
             decimal result = repository.ReadingUpdatedSalaryFromDataBase();
             Console.WriteLine("Updated Salary" + result);
         }
+
+        public static void RetrievingSpecificDateRangeData()
+        {
+            EmployeeRepository employeeRepository = new EmployeeRepository();
+            List<EmployeeModel> list = new List<EmployeeModel>();
+            try
+            {
+                list = employeeRepository.GetAllemployeeInDateRange();
+                foreach (EmployeeModel employees in list)
+                {
+                    Console.WriteLine($"Employee Id :{employees.EmployeeID}");
+                    Console.WriteLine($"Employee Name :{employees.EmployeeName}");
+                    Console.WriteLine($"Employee Salary :{employees.BasicPay}");
+                    Console.WriteLine($"Employee startdate :{employees.StartDate}");
+                    Console.WriteLine($"Employee Deductions :{employees.Deductions}");
+                    Console.WriteLine($"Employee Taxable Pay :{employees.TaxablePay}");
+                    Console.WriteLine($"Tax:{employees.Tax}");
+                    Console.WriteLine($"Net pay:{employees.NetPay}");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex);
+            }
+        }
     }
 }

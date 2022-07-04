@@ -150,6 +150,46 @@
             }
 
         }
+
+
+        public List<EmployeeModel> GetAllemployeeInDateRange()
+        {
+            using (connection)
+            {
+                string query = "select * from employee_payroll where start between cast('2019-03-03' as date) and getdate();";
+                SqlCommand sqlCommand = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader dr = sqlCommand.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        EmployeeModel employeeModel = new EmployeeModel();
+                        employeeModel.EmployeeID = dr.GetInt32(0);
+                        employeeModel.EmployeeName = dr.GetString(1);
+                        employeeModel.BasicPay = dr.GetDecimal(2);
+                        employeeModel.StartDate = dr.GetDateTime(3);
+                        employeeModel.Gender = dr.GetString(4);
+                        employeeModel.Deductions = dr.GetDecimal(5);
+                        employeeModel.TaxablePay = dr.GetDecimal(6);
+                        employeeModel.Tax = dr.GetDecimal(7);
+                        employeeModel.NetPay = dr.GetDecimal(8);
+
+                        employeeDetailsList.Add(employeeModel);
+
+
+                    }
+                    dr.Close();
+                    connection.Close();
+                    return employeeDetailsList;
+                }
+                else
+                {
+                    throw new Exception("No data found");
+                }
+
+            }
+        }
     }
 
 }
