@@ -224,6 +224,54 @@
 
             }
         }
+
+
+        public bool InsertingDataIntoMultipleTables(EmployeeModel employeeModel)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("insertingdata", connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Employeeid", employeeModel.EmployeeID);
+                    command.Parameters.AddWithValue("@phone_number", employeeModel.PhoneNumber);
+                    command.Parameters.AddWithValue("@address", employeeModel.Address);
+                    command.Parameters.AddWithValue("@Gender", employeeModel.Gender);
+                    command.Parameters.AddWithValue("@company_id", employeeModel.companyId);
+                    command.Parameters.AddWithValue("@start", employeeModel.StartDate);
+                    command.Parameters.AddWithValue("@salaryid", employeeModel.salaryid);
+                    command.Parameters.AddWithValue("@basepay", employeeModel.BasicPay);
+                    command.Parameters.AddWithValue("@deductions", employeeModel.Deductions);
+                    command.Parameters.AddWithValue("@taxable_pay", employeeModel.TaxablePay);
+                    command.Parameters.AddWithValue("@tax", employeeModel.Tax);
+                    command.Parameters.AddWithValue("@netpay", employeeModel.NetPay);
+                    command.Parameters.AddWithValue("@name", employeeModel.EmployeeName);
+                    command.Parameters.AddWithValue("@departmentid", employeeModel.departmentid);
+                    command.Parameters.AddWithValue("@departmentname", employeeModel.Department);
+                    command.Parameters.AddWithValue("@noOfEmployees", employeeModel.noOfEmployees);
+                    command.Parameters.AddWithValue("@headofdepartment", employeeModel.headOfDepartment);
+                    command.Parameters.AddWithValue("@companyname", employeeModel.companyName);
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    connection.Close();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+
+        }
     }
 
 }

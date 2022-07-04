@@ -13,6 +13,8 @@
 
             EmployeeRepositoryCaller.RetrievingGroupedDataByGender();
 
+            RetrievingSpecificDateRangeData();
+
         }
         public static void GettingAllData()
         {

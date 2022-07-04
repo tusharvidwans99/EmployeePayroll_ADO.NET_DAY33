@@ -99,5 +99,37 @@ namespace EmployeePayroll
                 Console.WriteLine(ex);
             }
         }
+
+
+        public static void AddingDataInMultipleTable()
+        {
+            //initializing employeemodel
+            EmployeeModel employeeModel = new EmployeeModel();
+            //adding values to variables
+            employeeModel.EmployeeID = 32;
+            employeeModel.EmployeeName = "Tushar";
+            employeeModel.Gender = "M";
+            employeeModel.PhoneNumber = 9585858585;
+            employeeModel.StartDate = Convert.ToDateTime("2022-07-15");
+            employeeModel.BasicPay = 500000;
+            employeeModel.Deductions = 50000;
+            employeeModel.TaxablePay = 450000;
+            employeeModel.Tax = 50000;
+            employeeModel.NetPay = 400000;
+            employeeModel.Address = "Pune";
+            employeeModel.companyId = 107;
+            employeeModel.salaryid = 16;
+            employeeModel.companyName = "Xceedance";
+            employeeModel.departmentid = 11;
+            employeeModel.Department = "Angular Developer";
+            employeeModel.headOfDepartment = "Mr. Pratik";
+            employeeModel.noOfEmployees = 44;
+
+
+            EmployeeRepository employeeRepository = new EmployeeRepository();
+            bool result = employeeRepository.InsertingDataIntoMultipleTables(employeeModel);
+            
+            Console.WriteLine(result == true ? "data writtern in database" : "data is not written in database");
+        }
     }
 }
