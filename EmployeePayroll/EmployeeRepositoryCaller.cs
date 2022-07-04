@@ -1,19 +1,11 @@
-﻿namespace EmployeePayroll
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace EmployeePayroll
 {
-    using System;
-    using System.Collections.Generic;
-    class Program
+    class EmployeeRepositoryCaller
     {
-        EmployeeModel employeeModel = new EmployeeModel();
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Welcome to Employee Payroll");
-            UpdatingSalary();
-            ReadingUpdatedData();
-
-            EmployeeRepositoryCaller.RetrievingGroupedDataByGender();
-
-        }
         public static void GettingAllData()
         {
             EmployeeRepository employeeRepository = new EmployeeRepository();
@@ -62,7 +54,6 @@
             decimal result = repository.ReadingUpdatedSalaryFromDataBase();
             Console.WriteLine("Updated Salary" + result);
         }
-
         public static void RetrievingSpecificDateRangeData()
         {
             EmployeeRepository employeeRepository = new EmployeeRepository();
@@ -80,6 +71,25 @@
                     Console.WriteLine($"Employee Taxable Pay :{employees.TaxablePay}");
                     Console.WriteLine($"Tax:{employees.Tax}");
                     Console.WriteLine($"Net pay:{employees.NetPay}");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex);
+            }
+        }
+        public static void RetrievingGroupedDataByGender()
+        {
+            EmployeeRepository employeeRepository = new EmployeeRepository();
+            List<EmployeeModel> list = new List<EmployeeModel>();
+            try
+            {
+                list = employeeRepository.GetGroupedData();
+                foreach (EmployeeModel employees in list)
+                {
+                    Console.WriteLine($"Gender: {employees.Gender} totalSum: {employees.totalSalary} MaxSalary: {employees.maxSalary} ");
 
                 }
             }

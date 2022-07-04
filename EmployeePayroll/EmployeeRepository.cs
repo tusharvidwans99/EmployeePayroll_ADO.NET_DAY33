@@ -190,6 +190,40 @@
 
             }
         }
+
+
+        public List<EmployeeModel> GetGroupedData()
+        {
+            using (connection)
+            {
+                string query = "select gender, sum(salary) total_sum, max(salary) max_salary, min(salary) min_salary, AVG(salary) avg_salary, count(salary) CountOfGenders from employee_payroll group by gender";
+                SqlCommand sqlCommand = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader dr = sqlCommand.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        EmployeeModel employeeModel = new EmployeeModel();
+                        employeeModel.Gender = dr["Gender"].ToString();
+                        employeeModel.totalSalary = dr.GetDecimal(1);
+                        employeeModel.maxSalary = Convert.ToDecimal(dr["max_salary"]);
+
+                        employeeDetailsList.Add(employeeModel);
+
+
+                    }
+                    dr.Close();
+                    connection.Close();
+                    return employeeDetailsList;
+                }
+                else
+                {
+                    throw new Exception("No data found");
+                }
+
+            }
+        }
     }
 
 }
