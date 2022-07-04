@@ -11,9 +11,16 @@
             UpdatingSalary();
             ReadingUpdatedData();
 
-            EmployeeRepositoryCaller.RetrievingGroupedDataByGender();
 
-            RetrievingSpecificDateRangeData();
+            //EmployeeRepositoryCaller.RetrievingGroupedDataByGender();
+
+            //RetrievingSpecificDateRangeData();
+            //EmployeeRepositoryCaller.RetrievingGroupedDataByGender();
+            //EmployeeRepositoryCaller.AddingDataInMultipleTable();
+
+            EmployeeRepositoryCaller.UpdatingSalary();
+            EmployeeRepositoryCaller.ReadingUpdatedData();
+
 
         }
         public static void GettingAllData()
