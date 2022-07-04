@@ -18,7 +18,7 @@ namespace EmployeePayrollMSTest
 
             //Act
             repository.UpdatingSalaryInDataBase(model);
-            decimal actual = repository.ReadingUpdatedSalaryFromDataBase();
+            decimal actual = repository.ReadingUpdatedSalaryFromDataBase(model);
 
             //Assert
             Assert.AreEqual(model.BasicPay, actual);

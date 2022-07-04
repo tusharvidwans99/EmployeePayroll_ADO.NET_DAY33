@@ -119,7 +119,7 @@
                 throw new Exception(ex.Message);
             }
         }
-        public decimal ReadingUpdatedSalaryFromDataBase()
+        public decimal ReadingUpdatedSalaryFromDataBase(EmployeeModel employeeModel)
         {
             using (this.connection)
             {

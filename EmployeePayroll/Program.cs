@@ -18,6 +18,7 @@
             //EmployeeRepositoryCaller.RetrievingGroupedDataByGender();
             //EmployeeRepositoryCaller.AddingDataInMultipleTable();
 
+
             EmployeeRepositoryCaller.UpdatingSalary();
             EmployeeRepositoryCaller.ReadingUpdatedData();
 
