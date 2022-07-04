@@ -1,132 +1,155 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EmployeePayroll
+﻿namespace EmployeePayroll
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq.Expressions;
+    using System.Text;
+    /// <summary>
+    /// employee repository class to connect to database
+    /// </summary>
     public class EmployeeRepository
     {
-
-        //static as connection will be made only once in application
         List<EmployeeModel> employeeDetailsList = new List<EmployeeModel>();
+        //connectionstring defines connection to be made to database
         public static string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=payroll_service_ADONET;Integrated Security=True";
+        //connection is made
         SqlConnection connection = new SqlConnection(connectionString);
-
-        public void GetAllemployee()
+        public List<EmployeeModel> GetAllemployee()
         {
+            using (connection)
+            {
+                string query = "select * from employee e join payroll p on e.salaryid = p.salary_Id join EmployeeDepartment ed on ed.employeeID = e.id join company c on c.company_id = e.company_id join departments d on d.departmentID = ed.departmentID ";
+                SqlCommand sqlCommand = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader dr = sqlCommand.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        EmployeeModel employeeModel = new EmployeeModel();
+                        employeeModel.EmployeeID = dr.GetInt32(0);
+                        employeeModel.EmployeeName = dr.GetString(1);
+                        employeeModel.StartDate = dr.GetDateTime(2);
+                        employeeModel.Gender = dr.GetString(3);
+                        employeeModel.PhoneNumber = dr.GetInt64(4);
+                        employeeModel.Address = dr.GetString(5);
+                        employeeModel.companyId = dr.GetInt32(6);
+                        employeeModel.BasicPay = dr.GetDecimal(8);
+                        employeeModel.Deductions = dr.GetDecimal(9);
+                        employeeModel.TaxablePay = dr.GetDecimal(10);
+                        employeeModel.Tax = dr.GetDecimal(11);
+                        employeeModel.NetPay = dr.GetDecimal(12);
+                        employeeModel.companyName = dr.GetString(17);
+                        employeeModel.Department = dr.GetString(19);
 
+                        employeeDetailsList.Add(employeeModel);
+
+
+                    }
+                    dr.Close();
+                    connection.Close();
+                    return employeeDetailsList;
+                }
+                else
+                {
+                    throw new Exception("No data found");
+                }
+
+            }
+        }
+        public bool AddEmployee(EmployeeModel employeeModel)
+        {
             try
             {
                 using (this.connection)
                 {
-                    string query = "select * from employee_payroll";
-                    SqlCommand sqlCommand = new SqlCommand(query, this.connection);
-                    this.connection.Open();
-                    SqlDataReader dr = sqlCommand.ExecuteReader();
-                    if (dr.HasRows)
+                    SqlCommand command = new SqlCommand("spAddEmployeeDetails", connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Employeename", employeeModel.EmployeeName);
+                    command.Parameters.AddWithValue("@phoneNumber", employeeModel.PhoneNumber);
+                    command.Parameters.AddWithValue("@address", employeeModel.Address);
+                    command.Parameters.AddWithValue("@Gender", employeeModel.Gender);
+                    command.Parameters.AddWithValue("@companyid", employeeModel.companyId);
+                    command.Parameters.AddWithValue("@start", employeeModel.StartDate);
+                    command.Parameters.AddWithValue("@salaryid", employeeModel.salaryid);
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    connection.Close();
+                    if (result != 0)
                     {
-                        while (dr.Read())
-                        {
-                            EmployeeModel employeeModel = new EmployeeModel();
-                            employeeModel.EmployeeID = dr.GetInt32(0);
-                            employeeModel.EmployeeName = dr.GetString(1);
-                            employeeModel.PhoneNumber = dr.GetString(2);
-                            employeeModel.Address = dr.GetString(3);
-                            employeeModel.Department = dr.GetString(4);
-
-                            employeeModel.Gender = Convert.ToChar(dr.GetString(5));
-                            employeeModel.BasicPay = dr.GetDouble(6);
-                            employeeModel.Deduction = dr.GetDouble(7);
-                            employeeModel.TaxablePay = dr.GetDouble(8);
-                            employeeModel.Tax = dr.GetDouble(9);
-                            employeeModel.NetPay = dr.GetDouble(10);
-                            employeeModel.StartDate = dr.GetDateTime(11);
-                            employeeModel.City = dr.GetString(12);
-                            employeeModel.Country = dr.GetString(13);
-
-
-                            //display retrieved record
-                            employeeDetailsList.Add(employeeModel);
-
-
-                        }
-                        foreach (var employee in employeeDetailsList)
-                        {
-                            Console.WriteLine($"EmployeeID: {employee.EmployeeID}\nEmployeeName: {employee.EmployeeName}\nPhoneNumber: {employee.PhoneNumber}\nAddress: {employee.Address}\nDepartment: {employee.Department}\nGender: {employee.Gender}\nBasic Pay: {employee.BasicPay}\nDeduction: {employee.Deduction}\nTaxable Pay: {employee.TaxablePay}\nTax: {employee.Tax}\nNet Pay: {employee.NetPay}\nStart Date: {employee.StartDate}\nCity: {employee.City}\nCountry: {employee.Country}");
-                            Console.WriteLine("---------X------------");
-                            Console.WriteLine("---------X------------");
-
-                        }
-
+                        return true;
                     }
-                    else
-                    {
-                        throw new Exception("No data found");
-                    }
-                    dr.Close();
-                    this.connection.Close();
+                    return false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new Exception(e.Message);
+                throw new Exception(ex.Message);
             }
             finally
             {
                 this.connection.Close();
             }
         }
-
-
-        public bool AddEmployeeModel(EmployeeModel employee)
+        public bool UpdatingSalaryInDataBase(EmployeeModel employeeModel)
         {
             try
             {
                 using (this.connection)
                 {
-                    SqlCommand command = new SqlCommand("SpAddEmployeeDetails",this.connection);
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@EmployeeName", employee.EmployeeName);
-                    command.Parameters.AddWithValue("@PhoneNumber", employee.PhoneNumber);
-                    command.Parameters.AddWithValue("@Address", employee.Address);
-                    command.Parameters.AddWithValue("@Department", employee.Department);
-                    command.Parameters.AddWithValue("@Gender", employee.Gender);
-                    command.Parameters.AddWithValue("@BasicPay", employee.BasicPay);
-                    command.Parameters.AddWithValue("@Deduction", employee.Deduction);
-                    command.Parameters.AddWithValue("@TaxablePay", employee.TaxablePay);
-                    command.Parameters.AddWithValue("@Tax", employee.Tax);
-                    command.Parameters.AddWithValue("@NetPay", employee.NetPay);
-                    command.Parameters.AddWithValue("@StartDate", DateTime.Now);
-                    command.Parameters.AddWithValue("@City", employee.City);
-                    command.Parameters.AddWithValue("@Country", employee.Country);
-                    this.connection.Open();
-                    var result = command.ExecuteNonQuery();
-                    this.connection.Close();
-
-                    if(result != 0)
+                    SqlCommand sqlCommand = new SqlCommand("spUpdatingSalary", connection);
+                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@id", employeeModel.EmployeeID);
+                    sqlCommand.Parameters.AddWithValue("@salary", employeeModel.BasicPay);
+                    sqlCommand.Parameters.AddWithValue("@name", employeeModel.EmployeeName);
+                    connection.Open();
+                    int result = sqlCommand.ExecuteNonQuery();
+                    if (result != 0)
                     {
                         return true;
                     }
                     return false;
 
-                    
-
                 }
+
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new Exception(e.Message);
-            }
-            finally
-            {
-                this.connection.Close();
+                throw new Exception(ex.Message);
             }
         }
+        public decimal ReadingUpdatedSalaryFromDataBase()
+        {
+            using (this.connection)
+            {
+                decimal salary;
+                EmployeeModel model = new EmployeeModel();
+                SqlCommand sqlCommand = new SqlCommand("Select * from employee_payroll", connection);
+                this.connection.Open();
+                SqlDataReader dr = sqlCommand.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        model.EmployeeID = Convert.ToInt32(dr["id"]);
+                        model.EmployeeName = dr["name"].ToString();
+                        model.BasicPay = Convert.ToDecimal(dr["salary"]);
+                    }
+                    Console.WriteLine($"employeeId :{model.EmployeeID}, employeename: {model.EmployeeName}, salary :{model.BasicPay}");
+                    salary = model.BasicPay;
 
+                }
+                else
+                {
+                    throw new Exception("no data found");
+                }
+                dr.Close();
+                connection.Close();
+                return salary;
+            }
+
+        }
     }
+
 }

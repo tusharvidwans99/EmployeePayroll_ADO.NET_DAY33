@@ -6,25 +6,32 @@ using System.Threading.Tasks;
 
 namespace EmployeePayroll
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
     public class EmployeeModel
+
     {
         public int EmployeeID { get; set; }
         public string EmployeeName { get; set; }
-        public string PhoneNumber { get; set; }
+        public long PhoneNumber { get; set; }
         public string Address { get; set; }
         public string Department { get; set; }
-        public char Gender { get; set; }
-
-        public double BasicPay { get; set; }
-        public double Deduction { get; set; }
-        public double TaxablePay { get; set; }
-        public double Tax { get; set; }
-        public double NetPay { get; set; }
-
+        public string Gender { get; set; }
+        public decimal BasicPay { get; set; }
+        public decimal Deductions { get; set; }
+        public decimal TaxablePay { get; set; }
+        public decimal Tax { get; set; }
         public DateTime StartDate { get; set; }
-        public string City { get; set; }
+        public string city { get; set; }
         public string Country { get; set; }
-
-
+        public string companyName { get; set; }
+        public int companyId { get; set; }
+        public decimal NetPay { get; set; }
+        public int salaryid { get; set; }
     }
+
+
+}
 }
